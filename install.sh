@@ -55,6 +55,8 @@ ln -sfn "$repo" "$config_dir"
 export MISE_YES=1
 mise trust "$config_dir/config.toml"
 mise bootstrap --yes --update
+cp "$repo/zsh/.zshrc" "$HOME/.zshrc"
+cp "$repo/zsh/.zprofile" "$HOME/.zprofile"
 
 echo
 echo "Setup aplicado. Abra um terminal novo e rode: mise run check"

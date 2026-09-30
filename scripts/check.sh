@@ -23,15 +23,6 @@ fzf --version
 zoxide --version
 pkg-config --version
 gcc --version
-zsh --version
-
-zsh_root="${HOME}/.local/share/zsh"
-for repo in ohmyzsh zsh-autosuggestions zsh-syntax-highlighting zsh-completions zsh-history-substring-search fzf-tab; do
-  if [[ ! -d "${zsh_root}/${repo}/.git" ]]; then
-    echo "Repositório ausente: ${zsh_root}/${repo}" >&2
-    exit 1
-  fi
-done
 uv python find "$version"
 
 if [[ ! -x "$default_python" ]]; then

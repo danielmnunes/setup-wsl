@@ -17,24 +17,16 @@ setup_root = "{{ config_source | canonicalize | dirname }}"
 [bootstrap.mise_shell_activate]
 # Sem ~/.bash_profile: no Ubuntu ele esconde o ~/.profile, que é quem
 # coloca ~/.local/bin no PATH.
+# O ~/.zshrc e o ~/.zprofile vêm de zsh/ e o install.sh copia os dois.
 bashrc = "activate"
-zshrc = "activate"
+zshrc = false
 
 [bootstrap.hooks]
 # config_root da config global é $HOME, não este repositório.
 # canonicalize segue o symlink ~/.config/mise -> este clone.
 pre-packages = "bash \"{{ vars.setup_root }}/scripts/apt-git-ppa.sh\""
 
-[bootstrap.repos]
-"~/.local/share/zsh/ohmyzsh" = { url = "https://github.com/ohmyzsh/ohmyzsh.git" }
-"~/.local/share/zsh/zsh-autosuggestions" = { url = "https://github.com/zsh-users/zsh-autosuggestions.git" }
-"~/.local/share/zsh/zsh-syntax-highlighting" = { url = "https://github.com/zsh-users/zsh-syntax-highlighting.git" }
-"~/.local/share/zsh/zsh-completions" = { url = "https://github.com/zsh-users/zsh-completions.git" }
-"~/.local/share/zsh/zsh-history-substring-search" = { url = "https://github.com/zsh-users/zsh-history-substring-search.git" }
-"~/.local/share/zsh/fzf-tab" = { url = "https://github.com/Aloxaf/fzf-tab.git" }
-
 [dotfiles]
-"~/.zshrc/activate" = { source = "zsh/activate.zsh", template = "tera" }
 "~/.gitconfig/delta" = { block = """
 [core]
     pager = delta
@@ -54,7 +46,6 @@ pre-packages = "bash \"{{ vars.setup_root }}/scripts/apt-git-ppa.sh\""
 "apt:git" = "latest"
 "apt:build-essential" = "latest"
 "apt:pkg-config" = "latest"
-"apt:zsh" = "latest"
 
 [tools]
 java = "temurin-25"
