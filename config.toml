@@ -1,0 +1,79 @@
+min_version = "2026.9.0"
+
+[settings]
+idiomatic_version_file_enable_tools = ["bun", "go", "java", "node"]
+
+[env]
+# Go fica no toolchain do mise. Projetos ainda podem pedir outra versão
+# com a diretiva toolchain do go.mod.
+GOTOOLCHAIN = "local"
+PYTHON_VERSION = "3.14"
+
+[bootstrap.mise_shell_activate]
+# Sem ~/.bash_profile: no Ubuntu ele esconde o ~/.profile, que é quem
+# coloca ~/.local/bin no PATH.
+bashrc = "activate"
+zshrc = "activate"
+
+[bootstrap.hooks]
+pre-packages = "bash \"{{ config_root }}/scripts/apt-git-ppa.sh\""
+
+[bootstrap.repos]
+"~/.local/share/zsh/ohmyzsh" = { url = "https://github.com/ohmyzsh/ohmyzsh.git" }
+"~/.local/share/zsh/zsh-autosuggestions" = { url = "https://github.com/zsh-users/zsh-autosuggestions.git" }
+"~/.local/share/zsh/zsh-syntax-highlighting" = { url = "https://github.com/zsh-users/zsh-syntax-highlighting.git" }
+"~/.local/share/zsh/zsh-completions" = { url = "https://github.com/zsh-users/zsh-completions.git" }
+"~/.local/share/zsh/zsh-history-substring-search" = { url = "https://github.com/zsh-users/zsh-history-substring-search.git" }
+"~/.local/share/zsh/fzf-tab" = { url = "https://github.com/Aloxaf/fzf-tab.git" }
+
+[dotfiles]
+"~/.zshrc/activate" = { source = "zsh/activate.zsh", template = "tera" }
+"~/.gitconfig/delta" = { block = """
+[core]
+    pager = delta
+[interactive]
+    diffFilter = delta --color-only
+[delta]
+    navigate = true
+    line-numbers = true
+""" }
+
+[bootstrap.packages]
+"apt:ca-certificates" = "latest"
+"apt:curl" = "latest"
+"apt:unzip" = "latest"
+"apt:gnupg" = "latest"
+"apt:software-properties-common" = "latest"
+"apt:git" = "latest"
+"apt:build-essential" = "latest"
+"apt:pkg-config" = "latest"
+"apt:zsh" = "latest"
+
+[tools]
+java = "temurin-25"
+go = "1.26"
+node = "24"
+bun = "1.4"
+uv = "latest"
+glab = "latest"
+ripgrep = "latest"
+fd = "latest"
+jq = "latest"
+bat = "latest"
+eza = "latest"
+delta = "latest"
+fzf = "latest"
+zoxide = "latest"
+
+[tasks.bootstrap]
+description = "Instala o Python padrão com uv e confere as ferramentas"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+bash scripts/install-python.sh
+bash scripts/check.sh
+'''
+
+[tasks.check]
+description = "Mostra as versões instaladas por este setup"
+run = "bash scripts/check.sh"

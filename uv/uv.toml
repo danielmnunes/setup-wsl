@@ -1,0 +1,2 @@
+# uv ignora o python3 do Ubuntu e usa o interpretador que ele mesmo instalou.
+python-preference = "only-managed"
