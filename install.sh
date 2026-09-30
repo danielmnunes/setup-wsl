@@ -42,6 +42,8 @@ if ! command -v mise >/dev/null 2>&1; then
   exit 1
 fi
 
+mkdir -p "$(dirname "$config_dir")"
+
 current="$(readlink -f "$config_dir" 2>/dev/null || true)"
 if [[ -e "$config_dir" && "$current" != "$repo" ]]; then
   echo "Já existe ${config_dir} e ele não aponta para este repositório." >&2

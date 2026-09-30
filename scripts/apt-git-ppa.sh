@@ -26,9 +26,13 @@ if [[ "$arch" == "amd64" ]]; then
   for sources in /etc/apt/sources.list.d/*git-core*; do
     case "$sources" in
       *.sources)
-        if ! grep -q '^Architectures:' "$sources"; then
-          printf '\nArchitectures: amd64\n' | sudo tee -a "$sources" >/dev/null
-        fi
+        # O campo tem que ficar na mesma stanza de Types. Uma linha no
+        # fim do arquivo, depois do Signed-By, vira outra stanza e o apt
+        # recusa o arquivo (falta Types).
+        sudo sed -i \
+          -e '/^Architectures:/d' \
+          -e '/^Types: /a Architectures: amd64' \
+          "$sources"
         ;;
       *.list)
         if grep -q '^deb https://ppa.launchpadcontent.net/git-core/ppa/ubuntu' "$sources" \

@@ -12,7 +12,7 @@ if [[ ! -f "$uv_config" ]]; then
   cp "$template" "$uv_config"
 fi
 
-uv python install "$version" --default
+uv python install "$version" --default --preview-features python-install-default
 uv python pin --global "$version"
 
 default_python="${HOME}/.local/bin/python"

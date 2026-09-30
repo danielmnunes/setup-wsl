@@ -9,6 +9,11 @@ idiomatic_version_file_enable_tools = ["bun", "go", "java", "node"]
 GOTOOLCHAIN = "local"
 PYTHON_VERSION = "3.14"
 
+[vars]
+# config_root da config global é $HOME. Este caminho segue o symlink
+# ~/.config/mise até o clone, e as tasks enxergam vars (não config_source).
+setup_root = "{{ config_source | canonicalize | dirname }}"
+
 [bootstrap.mise_shell_activate]
 # Sem ~/.bash_profile: no Ubuntu ele esconde o ~/.profile, que é quem
 # coloca ~/.local/bin no PATH.
@@ -16,7 +21,9 @@ bashrc = "activate"
 zshrc = "activate"
 
 [bootstrap.hooks]
-pre-packages = "bash \"{{ config_root }}/scripts/apt-git-ppa.sh\""
+# config_root da config global é $HOME, não este repositório.
+# canonicalize segue o symlink ~/.config/mise -> este clone.
+pre-packages = "bash \"{{ vars.setup_root }}/scripts/apt-git-ppa.sh\""
 
 [bootstrap.repos]
 "~/.local/share/zsh/ohmyzsh" = { url = "https://github.com/ohmyzsh/ohmyzsh.git" }
@@ -67,6 +74,7 @@ zoxide = "latest"
 
 [tasks.bootstrap]
 description = "Instala o Python padrão com uv e confere as ferramentas"
+dir = "{{ vars.setup_root }}"
 run = '''
 #!/usr/bin/env bash
 set -euo pipefail
@@ -76,4 +84,5 @@ bash scripts/check.sh
 
 [tasks.check]
 description = "Mostra as versões instaladas por este setup"
+dir = "{{ vars.setup_root }}"
 run = "bash scripts/check.sh"
