@@ -23,7 +23,13 @@ if ! sudo -v; then
 fi
 
 sudo apt-get update
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl zsh
+
+zsh_bin="$(command -v zsh)"
+login_shell="$(getent passwd "${USER}" | cut -d: -f7)"
+if [[ "$login_shell" != "$zsh_bin" ]]; then
+  sudo chsh -s "$zsh_bin" "${USER}"
+fi
 
 if [[ ! -x "${HOME}/.local/bin/mise" ]] && ! command -v mise >/dev/null 2>&1; then
   curl -fsSL https://mise.run | MISE_INSTALL_SKIP_IF_EXISTS=1 sh
@@ -55,8 +61,6 @@ ln -sfn "$repo" "$config_dir"
 export MISE_YES=1
 mise trust "$config_dir/config.toml"
 mise bootstrap --yes --update
-cp "$repo/zsh/.zshrc" "$HOME/.zshrc"
-cp "$repo/zsh/.zprofile" "$HOME/.zprofile"
 
 echo
 echo "Setup aplicado. Abra um terminal novo e rode: mise run check"

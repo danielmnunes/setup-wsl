@@ -1,0 +1,19 @@
+[wsl2]
+# Ponto de partida do guia (8 GB / 4 núcleos). Numa máquina maior, siga a
+# tabela em docs/wsl-performance.md antes de copiar para %UserProfile%\.wslconfig.
+memory=8GB
+processors=4
+swap=4GB
+
+# Windows 11 22H2 ou mais novo.
+# localhost nos dois sentidos, IPv6 e VPN.
+networkingMode=mirrored
+dnsTunneling=true
+firewall=true
+
+[experimental]
+# gradual devolve RAM aos poucos e preserva o cache de página do Linux.
+autoMemoryReclaim=gradual
+
+# VHD esparso para distros criadas depois desta mudança.
+sparseVhd=true

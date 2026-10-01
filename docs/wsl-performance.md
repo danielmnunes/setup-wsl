@@ -62,18 +62,19 @@ O padrão da Microsoft é 50% da RAM do Windows, todos os processadores lógicos
 
 Conte os processadores lógicos no Gerenciador de Tarefas. Se o servidor do editor roda dentro do WSL, pode entregar mais núcleos à VM. Swap grande empurra falta de RAM para o disco virtual.
 
-Exemplo para uma máquina de 32 GB e 12 processadores lógicos:
+O arquivo de exemplo deste repositório é [`wsl/.wslconfig`](../wsl/.wslconfig). Ele começa com 8 GB, 4 processadores e 4 GB de swap. Numa máquina maior, troque esses três valores pela linha da tabela antes de copiar para `%UserProfile%\.wslconfig`.
 
 ```ini
 [wsl2]
-memory=16GB
-processors=10
-swap=8GB
+memory=8GB
+processors=4
+swap=4GB
 
 # Windows 11 22H2 ou mais novo.
 # localhost nos dois sentidos, IPv6 e VPN.
 networkingMode=mirrored
 dnsTunneling=true
+firewall=true
 
 [experimental]
 # O padrão atual da Microsoft é dropCache, que devolve a RAM na hora.
@@ -95,41 +96,52 @@ wsl --manage Ubuntu-26.04 --set-sparse true
 
 A interface WSL Settings, no menu Iniciar, grava o mesmo arquivo. Os dois caminhos funcionam. Depois de salvar, rode `wsl --shutdown` e abra a distro de novo.
 
-## 3. Tire o PATH do Windows da frente
+## 3. wsl.conf da distro
 
-Dentro da distro, edite `/etc/wsl.conf` com sudo. Se o arquivo não existir, crie.
+No WSL, o `install.sh` copia [`wsl/wsl.conf`](../wsl/wsl.conf) para `/etc/wsl.conf`.
 
 ```ini
+[boot]
+systemd=true
+
+[automount]
+enabled=true
+root=/mnt/
+options="metadata,umask=22,fmask=11"
+mountFsTab=true
+
+[network]
+generateHosts=true
+generateResolvConf=true
+hostname=dev-wsl
+
 [interop]
 enabled=true
 appendWindowsPath=false
 ```
 
-Com isso o shell sobe sem dezenas de diretórios do Windows no `PATH`, e `git`, `node` e `python` resolvem para os binários Linux. O Git deste setup é `/usr/bin/git`. `explorer.exe` e outros programas do Windows continuam chamáveis pelo caminho completo.
+`appendWindowsPath=false` sobe o shell sem dezenas de diretórios do Windows no `PATH`. `git`, `node` e `python` resolvem para os binários Linux. O Git deste setup é `/usr/bin/git`. `explorer.exe` e outros programas do Windows continuam chamáveis pelo caminho completo. `enabled=true` mantém a interoperabilidade.
 
-`enabled=true` mantém a interoperabilidade. O que sai do caminho é só a lista automática de diretórios do Windows.
+`systemd=true` liga o systemd, como numa instalação Ubuntu normal. Serviço e o Docker Desktop dependem disso. O boot fica um pouco mais longo.
+
+`metadata` no automount grava permissão Linux nos arquivos de `/mnt`. É configuração de permissão. O caminho rápido para o código continua sendo o ext4, em `~/dev`.
+
+`hostname=dev-wsl` fixa o nome da distro. `generateHosts` e `generateResolvConf` deixam o WSL gerar `/etc/hosts` e `/etc/resolv.conf`.
 
 Aplique com `wsl --shutdown` no PowerShell e abra um terminal novo. Confira:
 
 ```bash
 git --version
 command -v git
+systemctl --version
+hostname
 ```
 
-A saída esperada é o Git do Linux, em `/usr/bin/git`.
-
-`metadata` no automount de `/mnt` ajusta permissão de arquivo no disco do Windows. Não use essa opção em busca de velocidade.
-
-O systemd faz falta para serviço, como Docker nativo na distro. Para mise, Git e linguagens, deixe o que a imagem já trouxe. A Ubuntu recente da Store em geral já liga o systemd, e o boot fica um pouco mais longo.
+A saída esperada é o Git do Linux, em `/usr/bin/git`, o systemd respondendo e o hostname `dev-wsl`.
 
 ## 4. Repositórios grandes
 
-Com o repositório já no ext4, o monitor de arquivos do Git (desde o 2.37; este setup instala o 2.55) reduz o custo de `git status`:
-
-```bash
-git config --global core.fsmonitor true
-git config --global core.untrackedCache true
-```
+Com o repositório já no ext4, o monitor de arquivos do Git (desde o 2.37; este setup instala o 2.55) reduz o custo de `git status`. O bootstrap grava `core.fsmonitor=true` e `core.untrackedCache=true` em `~/.gitconfig`.
 
 ## 5. Confira
 

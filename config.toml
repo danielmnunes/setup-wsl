@@ -17,7 +17,7 @@ setup_root = "{{ config_source | canonicalize | dirname }}"
 [bootstrap.mise_shell_activate]
 # Sem ~/.bash_profile: no Ubuntu ele esconde o ~/.profile, que é quem
 # coloca ~/.local/bin no PATH.
-# O ~/.zshrc e o ~/.zprofile vêm de zsh/ e o install.sh copia os dois.
+# O ~/.zshrc e o ~/.zprofile vêm de zsh/. O hook post-tools copia os dois.
 bashrc = "activate"
 zshrc = false
 
@@ -25,6 +25,8 @@ zshrc = false
 # config_root da config global é $HOME, não este repositório.
 # canonicalize segue o symlink ~/.config/mise -> este clone.
 pre-packages = "bash \"{{ vars.setup_root }}/scripts/apt-git-ppa.sh\""
+# Depois das ferramentas: o zshrc chama starship, fzf e zoxide do mise.
+post-tools = "bash \"{{ vars.setup_root }}/scripts/shell-setup.sh\""
 
 [dotfiles]
 "~/.gitconfig/delta" = { block = """
@@ -37,6 +39,20 @@ pre-packages = "bash \"{{ vars.setup_root }}/scripts/apt-git-ppa.sh\""
     line-numbers = true
 """ }
 
+"~/.gitconfig/defaults" = { block = """
+[core]
+    autocrlf = false
+    fsmonitor = true
+    untrackedCache = true
+[init]
+    defaultBranch = main
+[pull]
+    rebase = true
+[alias]
+    lg = log --oneline --graph --decorate --all
+    st = status -sb
+""" }
+
 [bootstrap.packages]
 "apt:ca-certificates" = "latest"
 "apt:curl" = "latest"
@@ -46,10 +62,16 @@ pre-packages = "bash \"{{ vars.setup_root }}/scripts/apt-git-ppa.sh\""
 "apt:git" = "latest"
 "apt:build-essential" = "latest"
 "apt:pkg-config" = "latest"
+"apt:zsh" = "latest"
+"apt:wget" = "latest"
+"apt:zip" = "latest"
+"apt:htop" = "latest"
+"apt:tree" = "latest"
+"apt:lsb-release" = "latest"
 
 [tools]
 java = "temurin-25"
-go = "1.26"
+go = "1.27"
 node = "24"
 bun = "1.4"
 uv = "latest"
@@ -62,6 +84,8 @@ eza = "latest"
 delta = "latest"
 fzf = "latest"
 zoxide = "latest"
+starship = "latest"
+fastfetch = "latest"
 
 [tasks.bootstrap]
 description = "Instala o Python padrão com uv e confere as ferramentas"
