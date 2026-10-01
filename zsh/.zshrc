@@ -1,4 +1,4 @@
-# Copiado para ~/.zshrc. Node, Bun e Python vêm do mise e do uv.
+# Copiado para ~/.zshrc. Node e Bun vêm do mise.
 if [[ -d "$HOME/.local/bin" && ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
   export PATH="$HOME/.local/bin:$PATH"
 fi
@@ -42,6 +42,13 @@ alias dc='docker compose'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias wsl-restart='wsl.exe --shutdown'
+
+# ── VS Code do Windows ─────────────────────────────────────────────────
+# appendWindowsPath=false: só o bin do VS Code entra no PATH, no fim, para
+# os binários Linux continuarem na frente.
+_vscode_bin="/mnt/c/Users/danunes/AppData/Local/Programs/Microsoft VS Code/bin"
+[[ -d "$_vscode_bin" ]] && path+=("$_vscode_bin")
+unset _vscode_bin
 
 # ── mise, fzf, zoxide ──────────────────────────────────────────────────
 eval "$(mise activate zsh)"

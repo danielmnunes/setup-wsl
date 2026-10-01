@@ -7,7 +7,6 @@ idiomatic_version_file_enable_tools = ["bun", "go", "java", "node"]
 # Go fica no toolchain do mise. Projetos ainda podem pedir outra versão
 # com a diretiva toolchain do go.mod.
 GOTOOLCHAIN = "local"
-PYTHON_VERSION = "3.14"
 
 [vars]
 # config_root da config global é $HOME. Este caminho segue o symlink
@@ -88,14 +87,9 @@ starship = "latest"
 fastfetch = "latest"
 
 [tasks.bootstrap]
-description = "Instala o Python padrão com uv e confere as ferramentas"
+description = "Confere as ferramentas instaladas"
 dir = "{{ vars.setup_root }}"
-run = '''
-#!/usr/bin/env bash
-set -euo pipefail
-bash scripts/install-python.sh
-bash scripts/check.sh
-'''
+run = "bash scripts/check.sh"
 
 [tasks.check]
 description = "Mostra as versões instaladas por este setup"

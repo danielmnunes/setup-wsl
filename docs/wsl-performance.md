@@ -120,7 +120,7 @@ enabled=true
 appendWindowsPath=false
 ```
 
-`appendWindowsPath=false` sobe o shell sem dezenas de diretórios do Windows no `PATH`. `git`, `node` e `python` resolvem para os binários Linux. O Git deste setup é `/usr/bin/git`. `explorer.exe` e outros programas do Windows continuam chamáveis pelo caminho completo. `enabled=true` mantém a interoperabilidade.
+`appendWindowsPath=false` sobe o shell sem dezenas de diretórios do Windows no `PATH`. `git` e `node` resolvem para os binários Linux. O Git deste setup é `/usr/bin/git`. `explorer.exe` e outros programas do Windows continuam chamáveis pelo caminho completo. `enabled=true` mantém a interoperabilidade.
 
 `systemd=true` liga o systemd, como numa instalação Ubuntu normal. Serviço e o Docker Desktop dependem disso. O boot fica um pouco mais longo.
 
